@@ -277,8 +277,9 @@ class SiteCopy extends Component
 
             Craft::$app->getQueue()->push(new SyncElementContent([
                 'elementId' => (int)$entry->id,
-                'sites'     => $matchingSites,
-                'data'      => $data,
+                'elementType' => get_class($entry),
+                'sites' => $matchingSites,
+                'data' => $data,
             ]));
         }
     }
