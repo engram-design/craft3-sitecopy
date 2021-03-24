@@ -35,6 +35,11 @@ class SyncElementContent extends BaseJob
      */
     public $data;
 
+    /**
+     * @var string The element type where we want to perform the syncing on
+     */
+    public $elementType;
+
     // Public Methods
     // =========================================================================
 
@@ -44,14 +49,6 @@ class SyncElementContent extends BaseJob
     public function execute($queue)
     {
         $elementsService = Craft::$app->getElements();
-
-        // use data only from $this->data, never from this element
-        // we cant be sure its the right localized element
-        $element = $elementsService->getElementById($this->elementId);
-
-        if (!$element) {
-            return;
-        }
 
         $totalSites = count($this->sites);
         $currentSite = 0;
@@ -63,7 +60,7 @@ class SyncElementContent extends BaseJob
             ]));
 
             /** @var Element $siteElement */
-            $siteElement = $elementsService->getElementById($element->id, get_class($element), $siteId);
+            $siteElement = $elementsService->getElementById($this->elementId, $this->elementType, $siteId);
 
             foreach ($this->data as $key => $item) {
                 if ($key == 'fields') {
