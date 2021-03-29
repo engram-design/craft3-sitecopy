@@ -15,6 +15,7 @@ use craft\events\ElementEvent;
 use craft\services\Elements;
 use craft\web\twig\variables\CraftVariable;
 use Exception;
+use goldinteractive\sitecopy\events\ModifyActiveStateEvent;
 use goldinteractive\sitecopy\models\SettingsModel;
 use yii\base\Event;
 
@@ -28,6 +29,8 @@ class SiteCopy extends Plugin
 {
     public $schemaVersion = '1.0.2';
     public $hasCpSettings = true;
+
+    const EVENT_MODIFY_ACTIVE_STATE = 'modifyActiveState';
 
     public function init()
     {
@@ -134,8 +137,16 @@ class SiteCopy extends Plugin
 
         $scas = $this->sitecopy->handleSiteCopyActiveState($element);
 
-        $siteCopyEnabled = $scas['siteCopyEnabled'];
-        $selectedSites = $scas['selectedSites'];
+        // Allow plugins to modify the active state
+        $event = new ModifyActiveStateEvent([
+            'element' => $element,
+            'activeState' => $scas,
+        ]);
+
+        $this->trigger(self::EVENT_MODIFY_ACTIVE_STATE, $event);
+
+        $siteCopyEnabled = $event->activeState['siteCopyEnabled'];
+        $selectedSites = $event->activeState['selectedSites'];
 
         $currentSite = $element->siteId ?? null;
 
