@@ -145,6 +145,11 @@ class SiteCopy extends Plugin
 
         $this->trigger(self::EVENT_MODIFY_ACTIVE_STATE, $event);
 
+        // Allow plugins to opt-out completely of rendering
+        if (!$event->isValid) {
+            return;
+        }
+
         $siteCopyEnabled = $event->activeState['siteCopyEnabled'];
         $selectedSites = $event->activeState['selectedSites'];
 

@@ -1,9 +1,9 @@
 <?php
 namespace goldinteractive\sitecopy\events;
 
-use yii\base\Event;
+use craft\events\CancelableEvent;
 
-class ModifyActiveStateEvent extends Event
+class ModifyActiveStateEvent extends CancelableEvent
 {
     public $element;
     public $activeState;
